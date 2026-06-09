@@ -1,0 +1,120 @@
+{
+  "name": "wayfind",
+  "displayName": "Wayfind",
+  "description": "Find your way in any repo: fact-based reference cards (integrations map, module patterns, how-tos) with freshness tracking. Every fact cited file:line.",
+  "version": "0.1.0",
+  "publisher": "maazizit",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maazizit/wayfind"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "documentation",
+    "onboarding",
+    "architecture",
+    "integrations",
+    "reference"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:docs/fiches/*.md"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "wayfind",
+          "title": "Wayfind",
+          "icon": "media/fiche.svg"
+        }
+      ]
+    },
+    "views": {
+      "wayfind": [
+        {
+          "id": "wayfind.list",
+          "name": "Cards",
+          "icon": "media/fiche.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "wayfind.refresh",
+        "title": "Wayfind: Refresh List",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "wayfind.generateIntegrations",
+        "title": "Wayfind: Generate Integrations Card"
+      },
+      {
+        "command": "wayfind.generateModulePattern",
+        "title": "Wayfind: Generate Module Pattern Card"
+      },
+      {
+        "command": "wayfind.generateHowto",
+        "title": "Wayfind: Generate How-To Card"
+      },
+      {
+        "command": "wayfind.rescan",
+        "title": "Wayfind: Re-scan Card (freshness)",
+        "icon": "$(sync)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "wayfind.refresh",
+          "when": "view == wayfind.list",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "wayfind.rescan",
+          "when": "view == wayfind.list && viewItem == fiche",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Wayfind",
+      "properties": {
+        "wayfind.agentCommand": {
+          "type": "string",
+          "default": "cursor-agent",
+          "description": "CLI agent used to generate cards (e.g. cursor-agent, copilot). Receives the prompt as argument."
+        },
+        "wayfind.fichesDir": {
+          "type": "string",
+          "default": "docs/fiches",
+          "description": "Cards directory, relative to the workspace root."
+        },
+        "wayfind.skillPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional path to the repo-fiches SKILL.md (ai-agents-kit). Added to the prompt when set."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0"
+  }
+}
