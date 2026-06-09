@@ -3,6 +3,7 @@ import { Fiche, fichesDir } from "./fiches";
 import { resolveSkillPath } from "./skill";
 
 type FicheKind = "integrations" | "module-pattern" | "howto";
+type DeliveryMode = "clipboard" | "terminal";
 
 const COMMON_RULES = [
   "Règles strictes: chaque fait cité avec fichier:ligne vérifiable, tableaux plutôt que prose,",
@@ -53,20 +54,73 @@ function slug(s: string): string {
     .slice(0, 40);
 }
 
-function runInTerminal(prompt: string): void {
-  const agentCommand = vscode.workspace
+function deliveryMode(): DeliveryMode {
+  return vscode.workspace
     .getConfiguration("wayfind")
-    .get<string>("agentCommand", "cursor-agent");
+    .get<DeliveryMode>("deliveryMode", "clipboard");
+}
 
+async function dispatchPrompt(prompt: string, label: string): Promise<void> {
+  if (deliveryMode() === "terminal") {
+    const agentCommand = vscode.workspace
+      .getConfiguration("wayfind")
+      .get<string>("agentCommand", "")
+      .trim();
+    if (!agentCommand) {
+      await deliverViaClipboard(prompt, label);
+      return;
+    }
+    runInTerminal(agentCommand, prompt);
+    vscode.window.showInformationMessage(
+      `Wayfind: prompt "${label}" envoyé au terminal (${agentCommand}).`
+    );
+    return;
+  }
+  await deliverViaClipboard(prompt, label);
+}
+
+async function deliverViaClipboard(
+  prompt: string,
+  label: string
+): Promise<void> {
+  await vscode.env.clipboard.writeText(prompt);
+  const openChat = "Ouvrir le chat Agent";
+  const choice = await vscode.window.showInformationMessage(
+    `Wayfind: prompt "${label}" copié dans le presse-papier. Colle-le dans le chat Cursor (mode Agent), puis laisse l'agent écrire le fichier.`,
+    openChat
+  );
+  if (choice === openChat) {
+    await tryOpenAgentChat();
+  }
+}
+
+async function tryOpenAgentChat(): Promise<void> {
+  const candidates = [
+    "composer.startComposerPrompt",
+    "aichat.newchataction",
+    "workbench.action.chat.open",
+  ];
+  for (const cmd of candidates) {
+    try {
+      await vscode.commands.executeCommand(cmd);
+      return;
+    } catch {
+      // try next Cursor/VS Code command
+    }
+  }
+}
+
+function runInTerminal(agentCommand: string, prompt: string): void {
   const terminal = vscode.window.createTerminal({ name: "Wayfind" });
   terminal.show();
-  // Single-quote the prompt for the shell; escape embedded single quotes.
-  const quoted = `'${prompt.replace(/'/g, `'\\''`)}'`;
-  terminal.sendText(`${agentCommand} ${quoted}`);
+  // Pass prompt via env var to avoid shell quoting bugs (zsh, quotes, backticks).
+  terminal.sendText(
+    `WAYFIND_PROMPT=$(cat <<'WAYFIND_EOF'\n${prompt}\nWAYFIND_EOF\n) ${agentCommand} "$WAYFIND_PROMPT"`
+  );
 }
 
 export async function generateIntegrations(): Promise<void> {
-  runInTerminal(await buildPrompt("integrations", ""));
+  await dispatchPrompt(await buildPrompt("integrations", ""), "integrations");
 }
 
 export async function generateModulePattern(): Promise<void> {
@@ -77,7 +131,10 @@ export async function generateModulePattern(): Promise<void> {
   if (!topic) {
     return;
   }
-  runInTerminal(await buildPrompt("module-pattern", topic));
+  await dispatchPrompt(
+    await buildPrompt("module-pattern", topic),
+    `pattern ${topic}`
+  );
 }
 
 export async function generateHowto(): Promise<void> {
@@ -89,7 +146,7 @@ export async function generateHowto(): Promise<void> {
   if (!topic) {
     return;
   }
-  runInTerminal(await buildPrompt("howto", topic));
+  await dispatchPrompt(await buildPrompt("howto", topic), `how-to ${topic}`);
 }
 
 export async function rescanFiche(fiche: Fiche): Promise<void> {
@@ -99,5 +156,5 @@ export async function rescanFiche(fiche: Fiche): Promise<void> {
     `(git diff --name-only <hash>..HEAD -- <scope>), mets à jour uniquement les sections impactées, ` +
     `ajoute une section "## Changements depuis <hash>" listant ajouts/suppressions/modifications, ` +
     `et remplace le header par la date du jour + hash HEAD. ${COMMON_RULES}`;
-  runInTerminal(prompt);
+  await dispatchPrompt(prompt, `re-scan ${rel}`);
 }

@@ -34,11 +34,31 @@ Every fact is cited with `file:line`. Tables, not prose. No chat back-and-forth.
 | `Wayfind: Re-scan Card` | Update a stale card (diff since its hash) |
 | `Wayfind: Refresh List` | Reload the sidebar |
 
+## Usage (Cursor)
+
+1. Open your repo in Cursor.
+2. Sidebar → **Wayfind** icon.
+3. `Cmd+Shift+P` → **Wayfind: Generate Integrations Card** (or Module Pattern / How-To).
+4. Wayfind **copies the prompt to your clipboard** and shows a notification.
+5. Open **Cursor Agent chat** (`Cmd+L` or `Cmd+I`) → **paste** → Enter.
+6. The agent scans the repo and writes `docs/fiches/*.md`.
+7. The card appears in the Wayfind sidebar with freshness status (✅ / ⚠️).
+
+> **Note:** `cursor-agent` CLI does not ship with Cursor IDE. Default mode is **clipboard**, not terminal.
+
+### Terminal mode (optional)
+
+If you have a working agent CLI (e.g. GitHub Copilot CLI):
+
+- Set `wayfind.deliveryMode` → `terminal`
+- Set `wayfind.agentCommand` → your CLI command
+
 ## Settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `wayfind.agentCommand` | `cursor-agent` | CLI agent that generates cards (`copilot`, etc.) |
+| `wayfind.deliveryMode` | `clipboard` | `clipboard` (Cursor chat) or `terminal` (external CLI) |
+| `wayfind.agentCommand` | _(empty)_ | CLI command — **terminal mode only** |
 | `wayfind.fichesDir` | `docs/fiches` | Cards directory |
 | `wayfind.skillPath` | _(empty)_ | Path to `repo-fiches/SKILL.md`; auto-detected if `ai-agents-kit` is in the workspace |
 
