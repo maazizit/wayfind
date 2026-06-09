@@ -36,7 +36,22 @@ Every fact is cited with `file:line`. Tables, not prose. No chat back-and-forth.
 |---------|---------|-------------|
 | `wayfind.agentCommand` | `cursor-agent` | CLI agent that generates cards (`copilot`, etc.) |
 | `wayfind.fichesDir` | `docs/fiches` | Cards directory |
-| `wayfind.skillPath` | _(empty)_ | Path to the `repo-fiches` SKILL.md (ai-agents-kit) to anchor the prompt |
+| `wayfind.skillPath` | _(empty)_ | Path to `repo-fiches/SKILL.md`; auto-detected if `ai-agents-kit` is in the workspace |
+
+Install the skill once:
+
+```bash
+npx dgtailoader install maazizit/ai-agents-kit/skills/docs/repo-fiches
+# or clone ai-agents-kit next to your project — Wayfind finds skills/docs/repo-fiches/SKILL.md
+```
+
+## Install from VSIX
+
+```bash
+npm install -g @vscode/vsce   # once
+npm run package               # produces wayfind-0.1.0.vsix
+code --install-extension wayfind-0.1.0.vsix
+```
 
 ## Development
 

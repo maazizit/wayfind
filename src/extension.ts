@@ -7,18 +7,34 @@ import {
   generateHowto,
   rescanFiche,
 } from "./generate";
-import { fichesDir } from "./fiches";
+import { fichesDir, loadFiches } from "./fiches";
+
+async function updateSidebarMessage(
+  treeView: vscode.TreeView<FicheItem>
+): Promise<void> {
+  const fiches = await loadFiches();
+  treeView.message =
+    fiches.length === 0
+      ? "No cards yet — run Wayfind: Generate Integrations Card"
+      : undefined;
+}
 
 export function activate(context: vscode.ExtensionContext): void {
   const provider = new FichesProvider();
 
+  const treeView = vscode.window.createTreeView("wayfind.list", {
+    treeDataProvider: provider,
+  });
+  void updateSidebarMessage(treeView);
+
+  const refreshAll = (): void => {
+    provider.refresh();
+    void updateSidebarMessage(treeView);
+  };
+
   context.subscriptions.push(
-    vscode.window.createTreeView("wayfind.list", {
-      treeDataProvider: provider,
-    }),
-    vscode.commands.registerCommand("wayfind.refresh", () =>
-      provider.refresh()
-    ),
+    treeView,
+    vscode.commands.registerCommand("wayfind.refresh", refreshAll),
     vscode.commands.registerCommand(
       "wayfind.generateIntegrations",
       generateIntegrations
@@ -44,9 +60,9 @@ export function activate(context: vscode.ExtensionContext): void {
     const watcher = vscode.workspace.createFileSystemWatcher(
       new vscode.RelativePattern(root, path.posix.join(fichesDir(), "*.md"))
     );
-    watcher.onDidChange(() => provider.refresh());
-    watcher.onDidCreate(() => provider.refresh());
-    watcher.onDidDelete(() => provider.refresh());
+    watcher.onDidChange(refreshAll);
+    watcher.onDidCreate(refreshAll);
+    watcher.onDidDelete(refreshAll);
     context.subscriptions.push(watcher);
   }
 }

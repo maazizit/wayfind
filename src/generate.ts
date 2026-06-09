@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { Fiche, fichesDir } from "./fiches";
+import { resolveSkillPath } from "./skill";
 
 type FicheKind = "integrations" | "module-pattern" | "howto";
 
@@ -10,11 +11,9 @@ const COMMON_RULES = [
   "Aucune intro, aucune conclusion. Marquer explicitement ce qui N'EXISTE PAS (❌ → à ajouter dans <fichier>).",
 ].join(" ");
 
-function buildPrompt(kind: FicheKind, topic: string): string {
+async function buildPrompt(kind: FicheKind, topic: string): Promise<string> {
   const dir = fichesDir();
-  const skillPath = vscode.workspace
-    .getConfiguration("wayfind")
-    .get<string>("skillPath", "");
+  const skillPath = await resolveSkillPath();
   const skillRef = skillPath
     ? `Suis le skill défini dans ${skillPath}. `
     : "";
@@ -67,7 +66,7 @@ function runInTerminal(prompt: string): void {
 }
 
 export async function generateIntegrations(): Promise<void> {
-  runInTerminal(buildPrompt("integrations", ""));
+  runInTerminal(await buildPrompt("integrations", ""));
 }
 
 export async function generateModulePattern(): Promise<void> {
@@ -78,7 +77,7 @@ export async function generateModulePattern(): Promise<void> {
   if (!topic) {
     return;
   }
-  runInTerminal(buildPrompt("module-pattern", topic));
+  runInTerminal(await buildPrompt("module-pattern", topic));
 }
 
 export async function generateHowto(): Promise<void> {
@@ -90,7 +89,7 @@ export async function generateHowto(): Promise<void> {
   if (!topic) {
     return;
   }
-  runInTerminal(buildPrompt("howto", topic));
+  runInTerminal(await buildPrompt("howto", topic));
 }
 
 export async function rescanFiche(fiche: Fiche): Promise<void> {

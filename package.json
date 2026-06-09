@@ -24,7 +24,7 @@
   ],
   "main": "./out/extension.js",
   "activationEvents": [
-    "workspaceContains:docs/fiches/*.md"
+    "onStartupFinished"
   ],
   "contributes": {
     "viewsContainers": {
