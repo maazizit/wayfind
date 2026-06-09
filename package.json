@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "publisher": "maazizit",
   "license": "MIT",
+  "icon": "media/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/maazizit/wayfind"
@@ -32,7 +33,7 @@
         {
           "id": "wayfind",
           "title": "Wayfind",
-          "icon": "media/fiche.svg"
+          "icon": "media/wayfind.svg"
         }
       ]
     },
@@ -41,7 +42,7 @@
         {
           "id": "wayfind.list",
           "name": "Cards",
-          "icon": "media/fiche.svg"
+          "icon": "media/wayfind.svg"
         }
       ]
     },

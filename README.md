@@ -1,5 +1,9 @@
 # Wayfind
 
+<p align="center">
+  <img src="media/icon.png" alt="Wayfind" width="96"/>
+</p>
+
 **Find your way in any repo.** Fact-based reference cards extracted from the codebase — integrations map, module patterns, how-tos — with freshness tracking in the sidebar.
 
 A card answers one practical question in under 2 minutes of reading:
