@@ -84,9 +84,9 @@ async function deliverViaClipboard(
   label: string
 ): Promise<void> {
   await vscode.env.clipboard.writeText(prompt);
-  const openChat = "Ouvrir le chat Agent";
+  const openChat = "Ouvrir Copilot Chat";
   const choice = await vscode.window.showInformationMessage(
-    `Wayfind: prompt "${label}" copié dans le presse-papier. Colle-le dans le chat Cursor (mode Agent), puis laisse l'agent écrire le fichier.`,
+    `Wayfind: prompt "${label}" copié. Colle-le dans GitHub Copilot Chat (mode Agent si dispo), laisse Copilot écrire le fichier dans docs/fiches/.`,
     openChat
   );
   if (choice === openChat) {
@@ -96,9 +96,11 @@ async function deliverViaClipboard(
 
 async function tryOpenAgentChat(): Promise<void> {
   const candidates = [
-    "composer.startComposerPrompt",
-    "aichat.newchataction",
     "workbench.action.chat.open",
+    "github.copilot.interactiveSession.focus",
+    "github.copilot.interactiveSession.open",
+    "workbench.panel.chat.view.copilot.focus",
+    "composer.startComposerPrompt",
   ];
   for (const cmd of candidates) {
     try {

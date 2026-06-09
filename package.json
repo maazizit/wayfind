@@ -2,7 +2,7 @@
   "name": "wayfind",
   "displayName": "Wayfind",
   "description": "Find your way in any repo: fact-based reference cards (integrations map, module patterns, how-tos) with freshness tracking. Every fact cited file:line.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "maazizit",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -93,12 +93,12 @@
           "type": "string",
           "enum": ["clipboard", "terminal"],
           "default": "clipboard",
-          "description": "How to run generation: clipboard (paste in Cursor Agent chat — default) or terminal (external CLI)."
+          "description": "How to run generation: clipboard (paste in Copilot Chat — default) or terminal (external CLI)."
         },
         "wayfind.agentCommand": {
           "type": "string",
           "default": "",
-          "description": "CLI for terminal mode only (e.g. copilot). Leave empty for clipboard mode. cursor-agent is NOT installed by default in Cursor."
+          "description": "CLI for terminal mode only (e.g. gh copilot). Leave empty — use clipboard + Copilot Chat in VS Code."
         },
         "wayfind.fichesDir": {
           "type": "string",

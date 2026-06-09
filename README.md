@@ -34,24 +34,26 @@ Every fact is cited with `file:line`. Tables, not prose. No chat back-and-forth.
 | `Wayfind: Re-scan Card` | Update a stale card (diff since its hash) |
 | `Wayfind: Refresh List` | Reload the sidebar |
 
-## Usage (Cursor)
+## Usage (VS Code + GitHub Copilot)
 
-1. Open your repo in Cursor.
+1. Open your repo in **Visual Studio Code** (with Copilot extension enabled).
 2. Sidebar → **Wayfind** icon.
-3. `Cmd+Shift+P` → **Wayfind: Generate Integrations Card** (or Module Pattern / How-To).
-4. Wayfind **copies the prompt to your clipboard** and shows a notification.
-5. Open **Cursor Agent chat** (`Cmd+L` or `Cmd+I`) → **paste** → Enter.
-6. The agent scans the repo and writes `docs/fiches/*.md`.
-7. The card appears in the Wayfind sidebar with freshness status (✅ / ⚠️).
+3. `Cmd+Shift+P` → **Wayfind: Generate Integrations Card**.
+4. Wayfind **copies the prompt to your clipboard** → notification appears.
+5. Open **Copilot Chat**: `Ctrl+Cmd+I` (Mac) or `Ctrl+Alt+I` (Windows), or click the Copilot icon.
+6. Switch to **Agent** mode if available (so Copilot can create files).
+7. **Paste** (`Cmd+V`) → Enter.
+8. Copilot scans the repo and writes `docs/fiches/integrations.md`.
+9. Card appears in the Wayfind sidebar (✅ fresh / ⚠️ drift).
 
-> **Note:** `cursor-agent` CLI does not ship with Cursor IDE. Default mode is **clipboard**, not terminal.
+> **Do not use terminal mode** unless you installed a Copilot CLI. Default is **clipboard** — works with Copilot Chat built into VS Code.
 
-### Terminal mode (optional)
+### Optional: terminal mode with Copilot CLI
 
-If you have a working agent CLI (e.g. GitHub Copilot CLI):
+Only if you installed [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli):
 
-- Set `wayfind.deliveryMode` → `terminal`
-- Set `wayfind.agentCommand` → your CLI command
+- Settings → `wayfind.deliveryMode` → `terminal`
+- Settings → `wayfind.agentCommand` → `gh copilot` (or your CLI)
 
 ## Settings
 
